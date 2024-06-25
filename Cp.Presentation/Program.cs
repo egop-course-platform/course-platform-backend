@@ -15,4 +15,6 @@ app.MapMirrorSharp(
     }
 );
 
+app.UseEndpoints(endpoints => { });
+
 app.Run();
