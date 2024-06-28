@@ -10,6 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.10.0" />
+      <PackageReference Include="MirrorSharp.AspNetCore" Version="4.0.0" />
     </ItemGroup>
 
 </Project>
