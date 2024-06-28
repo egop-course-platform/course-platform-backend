@@ -8,9 +8,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.10.0" />
-      <PackageReference Include="MirrorSharp.AspNetCore" Version="4.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="4.3.1" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.3.1" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.3.1" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.3.1" PrivateAssets="All"/>
+        <PackageReference Include="MirrorSharp.AspNetCore" Version="4.0.0"/>
+        <PackageReference Include="MirrorSharp.Common" Version="3.0.9" />
     </ItemGroup>
 
+    <Target Name="CopySdkReferenceAssemblies" AfterTargets="ResolveReferences">
+        <ItemGroup>
+            <Content Include="@(Reference->'%(RootDir)%(Directory)%(Filename)%(Extension)')"
+                     Link="@(Reference->'ref-assemblies\%(Filename)%(Extension)')"
+                     Condition="$([System.String]::new('%(Filename)').StartsWith('System')) or '%(Filename)' == 'netstandard'">
+                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            </Content>
+            <Content Include="@(Reference->'%(RootDir)%(Directory)%(Filename).xml')"
+                     Link="@(Reference->'ref-assemblies\%(Filename).xml')"
+                     Condition="($([System.String]::new('%(Filename)').StartsWith('System')) or '%(Filename)' == 'netstandard')
+                          and Exists('%(RootDir)%(Directory)%(Filename).xml')">
+                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            </Content>
+        </ItemGroup>
+    </Target>
 </Project>

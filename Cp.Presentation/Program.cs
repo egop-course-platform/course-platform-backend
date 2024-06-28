@@ -1,74 +1,55 @@
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebSockets;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Completion;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.Options;
-using Microsoft.CodeAnalysis.Text;
+using MirrorSharp;
+using MirrorSharp.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 
-builder.Services.AddWebSockets(x => { });
-
 var app = builder.Build();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseWebSockets();
 
-app.MapGet("/", () => "Hello World!");
-
-app.UseCors(
-    x => x.AllowAnyOrigin()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
+app.MapMirrorSharp(
+    "/mirrorsharp",
+    new MirrorSharpOptions
+        {
+            SelfDebugEnabled = true,
+            IncludeExceptionDetails = true
+        }
+        .SetupCSharp(
+            o =>
+            {
+                o.MetadataReferences = GetAllReferences()
+                    .ToImmutableList();
+                o.CompilationOptions = o.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication);
+            }
+        )
 );
 
-app.MapPost(
-    "/completion",
-    async ([FromBody] CompletionRequest request) =>
-    {
-        var compilationOptions = new CSharpCompilationOptions(
-            OutputKind.DynamicallyLinkedLibrary,
-            usings: ["System"]
-        );
-
-        using var workspace = new AdhocWorkspace();
-
-        var scriptProjectInfo = ProjectInfo.Create(
-                ProjectId.CreateNewId(),
-                VersionStamp.Create(),
-                "Script",
-                "Script",
-                LanguageNames.CSharp,
-                isSubmission: true
-            )
-            .WithMetadataReferences(
-                new[]
-                {
-                    MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
-                }
-            )
-            .WithCompilationOptions(compilationOptions);
-
-        var scriptProject = workspace.AddProject(scriptProjectInfo);
-        var scriptDocumentInfo = DocumentInfo.Create(
-            DocumentId.CreateNewId(scriptProject.Id),
-            "Script.cs",
-            sourceCodeKind: SourceCodeKind.Script,
-            loader: TextLoader.From(TextAndVersion.Create(SourceText.From(request.Code), VersionStamp.Create()))
-        );
-        var scriptDocument = workspace.AddDocument(scriptDocumentInfo);
-        var completionService = CompletionService.GetService(scriptDocument)!;
-
-        var completions = await completionService.GetCompletionsAsync(scriptDocument, request.Code.Length - 1);
-
-        return Results.Ok(completions.ItemsList.Select(x => x.DisplayText));
-    }
-);
 
 app.Run();
 
+static IEnumerable<MetadataReference> GetAllReferences()
+{
+    yield return ReferenceAssembly("System");
+    yield return ReferenceAssembly("System.Console");
+    yield return ReferenceAssembly("System.Runtime");
+    yield return ReferenceAssembly("System.Collections");
+    yield return MetadataReference.CreateFromFile(typeof(Console).Assembly.Location);
+}
 
+static MetadataReference ReferenceAssembly(string name)
+{
+    var rootPath = Path.Combine(AppContext.BaseDirectory, "ref-assemblies");
+    var assemblyPath = Path.Combine(rootPath, name + ".dll");
+    var documentationPath = Path.Combine(rootPath, name + ".xml");
 
-record CompletionRequest(string Code);
+    return MetadataReference.CreateFromFile(
+        assemblyPath,
+        documentation: XmlDocumentationProvider.CreateFromFile(documentationPath)
+    );
+}
