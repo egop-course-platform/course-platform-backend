@@ -9,7 +9,7 @@ RUN dotnet restore "Cp.Presentation/Cp.Presentation.csproj"
 # Copy the rest of the application and build it
 COPY ./Cp.Presentation ./Cp.Presentation
 WORKDIR "/src/Cp.Presentation"
-RUN dotnet publish "Cp.Presentation.csproj" --no-restore -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Cp.Presentation.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Use the runtime image to run the application
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
