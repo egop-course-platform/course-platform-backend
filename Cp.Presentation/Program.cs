@@ -48,13 +48,6 @@ app.UseWebSockets();
 app.MapGet("/", () => Results.Ok("App Runs"))
     .WithSummary("Default endpoint, returning \"App Runs\" string");
 
-app.Use(x => async context =>
-    {
-        Console.WriteLine($"Before mirrorsharp: {context.Request.Path}");
-        await x.Invoke(context);
-    }
-);
-
 app.MapMirrorSharp(
     "/mirrorsharp",
     new MirrorSharpOptions
