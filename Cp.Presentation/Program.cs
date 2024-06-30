@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.OpenApi.Models;
@@ -7,6 +8,12 @@ using MirrorSharp.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
@@ -24,10 +31,12 @@ builder.Services.AddSwaggerGen(
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
+
 app.UseSwagger();
 app.UseSwaggerUI(x =>
 {
-    x.SwaggerEndpoint("/swagger/Default/swagger.json", "Egop Interactive Course Platform");
+    x.SwaggerEndpoint("Default/swagger.json", "Egop Interactive Course Platform");
 });
 
 app.UseDefaultFiles();
