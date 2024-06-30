@@ -33,11 +33,7 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 
-app.UseSwagger(
-    x =>
-    {
-        x.RouteTemplate = "/api/swagger/{documentName}/swagger.json";
-    });
+app.UseSwagger();
 app.UseSwaggerUI(x =>
 {
     x.SwaggerEndpoint("Default/swagger.json", "Egop Interactive Course Platform");
