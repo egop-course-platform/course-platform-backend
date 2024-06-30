@@ -1,17 +1,41 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.OpenApi.Models;
 using MirrorSharp;
 using MirrorSharp.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddCors();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(
+    x =>
+    {
+        x.SwaggerDoc("Default", new OpenApiInfo()
+        {
+            Title = "Egop Interactive Course Platform",
+            Version = "Default"
+        });
+        x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Cp.Presentation.xml"));
+    }
+);
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(x =>
+{
+    x.SwaggerEndpoint("/swagger/Default/swagger.json", "Egop Interactive Course Platform");
+});
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseWebSockets();
+
+app.MapGet("/", () => Results.Ok("App Runs"))
+    .WithSummary("Default endpoint, returning \"App Runs\" string");
 
 app.MapMirrorSharp(
     "/mirrorsharp",
