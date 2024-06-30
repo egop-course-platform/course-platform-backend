@@ -49,7 +49,7 @@ app.MapGet("/", () => Results.Ok("App Runs"))
     .WithSummary("Default endpoint, returning \"App Runs\" string");
 
 app.MapMirrorSharp(
-    "/api/mirrorsharp",
+    "/mirrorsharp",
     new MirrorSharpOptions
         {
             SelfDebugEnabled = true,
