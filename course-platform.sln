@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "meta", "meta", "{FDF78D2F-6
 		.gitignore = .gitignore
 		Dockerfile = Dockerfile
 		README.md = README.md
+		.github\workflows\deploy.yml = .github\workflows\deploy.yml
 	EndProjectSection
 EndProject
 Global
