@@ -33,6 +33,8 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 
+app.UsePathBase("/api");
+
 app.UseSwagger();
 app.UseSwaggerUI(x =>
 {
