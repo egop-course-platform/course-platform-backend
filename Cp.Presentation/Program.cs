@@ -31,6 +31,11 @@ builder.Services.AddSwaggerGen(
 
 var app = builder.Build();
 
+if (builder.Environment.IsProduction())
+{
+    app.UsePathBase("/api");
+}
+
 app.UseForwardedHeaders();
 
 app.UseSwagger();
