@@ -1,5 +1,9 @@
 version: "3"
 
+networks:
+  course-platform:
+    external: true
+
 services:
   main-server:
     container_name: main-server
@@ -8,5 +12,5 @@ services:
       dockerfile: Dockerfile
     environment:
       ASPNETCORE_URLS: "http://+:80"
-    ports:
-      - "80:80"
+    networks: 
+      - course-platform

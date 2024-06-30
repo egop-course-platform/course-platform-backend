@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.WebSockets;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using MirrorSharp;
 using MirrorSharp.AspNetCore;
 
@@ -25,7 +25,9 @@ app.MapMirrorSharp(
             {
                 o.MetadataReferences = GetAllReferences()
                     .ToImmutableList();
-                o.CompilationOptions = o.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication);
+                o.ParseOptions = o.ParseOptions.WithLanguageVersion(LanguageVersion.Latest);
+                o.CompilationOptions = o.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication)
+                    .WithUsings("System");
             }
         )
 );
