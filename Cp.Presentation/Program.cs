@@ -31,14 +31,13 @@ builder.Services.AddSwaggerGen(
 
 var app = builder.Build();
 
-if (builder.Environment.IsProduction())
-{
-    app.UsePathBase("/api");
-}
-
 app.UseForwardedHeaders();
 
-app.UseSwagger();
+app.UseSwagger(
+    x =>
+    {
+        x.RouteTemplate = "api/{documentName}/swagger.json";
+    });
 app.UseSwaggerUI(x =>
 {
     x.SwaggerEndpoint("Default/swagger.json", "Egop Interactive Course Platform");
