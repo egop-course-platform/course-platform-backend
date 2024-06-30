@@ -36,7 +36,7 @@ app.UseForwardedHeaders();
 app.UseSwagger(
     x =>
     {
-        x.RouteTemplate = "api/swagger/{documentName}/swagger.json";
+        x.RouteTemplate = "/api/swagger/{documentName}/swagger.json";
     });
 app.UseSwaggerUI(x =>
 {
