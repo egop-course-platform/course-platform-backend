@@ -61,7 +61,7 @@ app.MapMirrorSharp(
                 o.MetadataReferences = GetAllReferences()
                     .ToImmutableList();
                 o.ParseOptions = o.ParseOptions.WithLanguageVersion(LanguageVersion.Latest);
-                o.CompilationOptions = new CSharpCompilationOptions(OutputKind.ConsoleApplication)
+                o.CompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                     .WithUsings("System");
                 o.SetScriptMode(true);
             }
