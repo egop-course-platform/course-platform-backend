@@ -63,6 +63,7 @@ app.MapMirrorSharp(
                 o.ParseOptions = o.ParseOptions.WithLanguageVersion(LanguageVersion.Latest);
                 o.CompilationOptions = new CSharpCompilationOptions(OutputKind.ConsoleApplication)
                     .WithUsings("System");
+                o.SetScriptMode(true);
             }
         )
 );
@@ -76,7 +77,6 @@ static IEnumerable<MetadataReference> GetAllReferences()
     yield return ReferenceAssembly("System.Console");
     yield return ReferenceAssembly("System.Runtime");
     yield return ReferenceAssembly("System.Collections");
-    yield return MetadataReference.CreateFromFile(typeof(Program).Assembly.Location);
 }
 
 static MetadataReference ReferenceAssembly(string name)
